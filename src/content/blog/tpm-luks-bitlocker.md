@@ -14,8 +14,7 @@ Este artículo te guía paso a paso para configurar el desbloqueo automático en
 
 El Módulo de Plataforma Confiable (TPM 2.0) es un chip de seguridad integrado que almacena tus claves criptográficas. Su función principal es asegurar que nadie haya alterado el proceso de arranque. Si el sistema operativo detecta que el firmware ha sido modificado, el TPM se "sella" y exige la clave manual para proteger tus datos.
 
-### **Nota sobre Secure Boot y Microsoft Keys:**
-
+> **Nota sobre Secure Boot y Microsoft Keys:**
 Actualmente, tu sistema probablemente utiliza las **Microsoft Standard Keys**. Esto te da un **Dual Boot perfecto** con estabilidad inmediata, ya que tu BIOS confía en los certificados que permiten a Fedora (a través de un "shim" firmado) y Windows coexistir. La alternativa de usar "Custom Keys" te daría control total, pero haría que configurar el arranque Dual Boot fuera extremadamente complicado.  
 
 
@@ -49,7 +48,7 @@ En Fedora, utilizaremos la herramienta systemd-cryptenroll para vincular tu clav
 sudo systemd-cryptenroll --tpm2-device=auto --tpm2-pcrs=0+2+7 /dev/nvme0n1p3
 ```
 
-**(Importante:** Reemplaza /dev/nvme0n1p3 con la ruta a tu partición cifrada real).  
+> **(Importante:** Reemplaza /dev/nvme0n1p3 con la ruta a tu partición cifrada real).  
 
 ## **4\. Protocolo de Coexistencia (¡El Orden Sí Importa\!)**
 
@@ -70,8 +69,6 @@ En esencia, le estás diciendo a BitLocker que use el Módulo de Plataforma Conf
 * manage-bde: Herramienta de línea de comandos para administrar BitLocker Drive Encryption.  
 * \-protectors \-add C:: Indica que se añadirá un método de protección al volumen C:.  
 * \-tpm: Especifica que el protector es el TPM, el cual almacenará la clave de cifrado y solo la liberará si el entorno de arranque no ha sido alterado.
-
-Este es un paso de **preparación**; la activación final y el inicio del cifrado ocurren en el siguiente paso.
 
 3. **Windows (Paso 3 \- Activar):** Enciende BitLocker desde el Panel de Control. **¡Asegúrate de guardar la clave de recuperación de 48 dígitos fuera del PC\!** Esto es CRÍTICO.  
 4. **Sincronización Final:** Reinicia tu equipo. Ambos sistemas registrarán sus mediciones y ya deberían funcionar de forma automática.
