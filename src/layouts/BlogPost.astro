@@ -2,7 +2,6 @@
 import '../styles/global.css';
 const { title, description, pubDate, heroImage, headings } = Astro.props;
 
-// Si no hay título en el frontmatter, buscamos el primer H1 (#) de los headings
 const displayTitle = title || headings?.find((h: any) => h.depth === 1)?.text || "Artículo sin título";
 ---
 <!doctype html>
@@ -42,9 +41,82 @@ const displayTitle = title || headings?.find((h: any) => h.depth === 1)?.text ||
 </html>
 
 <style is:global>
-	.prose h1 { display: none; } /* Ocultamos el H1 del cuerpo porque ya lo mostramos en el header */
-	.prose h2 { margin-top: 2rem; margin-bottom: 1rem; }
+	/* Tipografía y estructura base */
+	.prose {
+		max-width: 100%;
+	}
+	.prose h1 { display: none; }
+	.prose h2 { margin-top: 2.5rem; margin-bottom: 1.25rem; color: var(--title-color); }
+	.prose h3 { margin-top: 1.5rem; margin-bottom: 1rem; color: var(--accent-color); }
 	.prose p { margin-bottom: 1.5rem; }
-	.prose ul { margin-bottom: 1.5rem; padding-left: 1.5rem; }
+	
+	/* Enlaces dentro del texto */
+	.prose a {
+		text-decoration: underline;
+		text-underline-offset: 4px;
+	}
+
+	/* Listas */
+	.prose ul, .prose ol { 
+		margin-bottom: 1.5rem; 
+		padding-left: 1.5rem; 
+	}
 	.prose li { margin-bottom: 0.5rem; }
+
+	/* Bloques de Código */
+	.prose pre {
+		background: var(--deep-night);
+		padding: 1.5rem;
+		border-radius: 12px;
+		overflow-x: auto;
+		border: 1px solid var(--border-color);
+		margin: 2rem 0;
+	}
+	.prose code {
+		font-family: var(--font-mono);
+		font-size: 0.9rem;
+		background: var(--subtle);
+		padding: 0.2rem 0.4rem;
+		border-radius: 4px;
+	}
+	.prose pre code {
+		background: transparent;
+		padding: 0;
+		color: var(--snow);
+	}
+
+	/* Citas */
+	.prose blockquote {
+		border-left: 4px solid var(--accent-color);
+		padding: 0.5rem 0 0.5rem 1.5rem;
+		margin: 2rem 0;
+		font-style: italic;
+		opacity: 0.9;
+		background: var(--subtle);
+		border-radius: 0 8px 8px 0;
+	}
+
+	/* Tablas */
+	.prose table {
+		width: 100%;
+		border-collapse: collapse;
+		margin: 2rem 0;
+	}
+	.prose th, .prose td {
+		border: 1px solid var(--border-color);
+		padding: 0.75rem;
+		text-align: left;
+	}
+	.prose th {
+		background: var(--subtle);
+		font-family: var(--font-display);
+	}
+
+	/* Imágenes */
+	.prose img {
+		max-width: 100%;
+		height: auto;
+		border-radius: 12px;
+		margin: 2rem 0;
+	}
 </style>

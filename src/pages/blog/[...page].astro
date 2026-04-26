@@ -2,9 +2,13 @@
 import '../../styles/global.css';
 import { getCollection } from 'astro:content';
 import type { Page } from 'astro';
+import fs from 'node:fs';
+import path from 'node:path';
 
 export async function getStaticPaths({ paginate }: { paginate: any }) {
-  const allPosts = await getCollection('blog');
+  const allPosts = await getCollection('blog', ({ data }) => {
+	return data.draft !== true;
+  });
   const sortedPosts = allPosts.sort(
     (a, b) => b.data.pubDate.valueOf() - a.data.pubDate.valueOf()
   );
@@ -13,11 +17,19 @@ export async function getStaticPaths({ paginate }: { paginate: any }) {
 
 const { page } = Astro.props as { page: Page<any> };
 
-// Extraer todos los tags únicos de la colección completa (no solo de la página actual)
-const allPosts = await getCollection('blog');
-const allTags = [...new Set(allPosts.map((post) => post.data.tags).flat())].sort();
-
-const formatId = (id: string) => id.split('-').map(word => word.charAt(0).toUpperCase() + word.slice(1)).join(' ');
+// Función para obtener el título del # (H1) o del nombre del archivo
+const getDisplayTitle = (post: any) => {
+	if (post.data.title) return post.data.title;
+	
+	try {
+		const filePath = path.join(process.cwd(), 'src/content/blog', `${post.id}.md`);
+		const content = fs.readFileSync(filePath, 'utf-8');
+		const match = content.match(/^#\s+(.+)$/m);
+		return match ? match[1] : post.id;
+	} catch (e) {
+		return post.id;
+	}
+};
 ---
 
 <!doctype html>
@@ -37,51 +49,31 @@ const formatId = (id: string) => id.split('-').map(word => word.charAt(0).toUppe
 				</div>
 			</header>
 
-			<main class="blog-grid">
-				<!-- Columna de Artículos (8/12) -->
-				<div class="posts-column">
-					<ul style="list-style: none; padding: 0; display: flex; flex-direction: column; gap: 1.5rem;">
-						{page.data.map((post: any) => (
-							<li>
-								<article>
-									<a href={`/blog/${post.id}`} style="display: block; border: 1px solid var(--border-color); padding: 1.5rem; border-radius: 12px; background: var(--card-bg);">
-										<h3 style="margin-bottom: 0.5rem;">{post.data.title || formatId(post.id)}</h3>
-										<p style="font-size: 0.9rem; opacity: 0.8; margin-bottom: 0.5rem;">{post.data.description || "Sin descripción disponible."}</p>
-										
-										<div class="post-meta">
-											<span style="font-family: var(--font-mono); font-size: 0.75rem; opacity: 0.6;">
-												{post.data.pubDate.toLocaleDateString('es-es', { year: 'numeric', month: 'long', day: 'numeric' })}
-											</span>
-											<div class="post-tags">
-												{post.data.tags.map((tag: string) => (
-													<span class="mini-tag">#{tag}</span>
-												))}
-											</div>
-										</div>
-									</a>
-								</article>
-							</li>
-						))}
-					</ul>
+			<main>
+				<ul style="list-style: none; padding: 0; display: flex; flex-direction: column; gap: 1.5rem;">
+					{page.data.map((post: any) => (
+						<li>
+							<article>
+								<a href={`/blog/${post.data.slug || post.id}`} style="display: block; border: 1px solid var(--border-color); padding: 1.5rem; border-radius: 12px; background: var(--card-bg);">
+									<h3 style="margin-bottom: 0.5rem;">{getDisplayTitle(post)}</h3>
+									<p style="font-size: 0.9rem; opacity: 0.8; margin-bottom: 0.5rem;">{post.data.description || "Sin descripción disponible."}</p>
+									
+									<div class="post-meta">
+										<span style="font-family: var(--font-mono); font-size: 0.75rem; opacity: 0.6;">
+											{post.data.pubDate.toLocaleDateString('es-es', { year: 'numeric', month: 'long', day: 'numeric' })}
+										</span>
+									</div>
+								</a>
+							</article>
+						</li>
+					))}
+				</ul>
 
-					<nav class="pagination">
-						{page.url.prev ? <a href={page.url.prev}>← Anterior</a> : <span class="disabled">← Anterior</span>}
-						<span class="page-info">Página {page.currentPage} de {page.lastPage}</span>
-						{page.url.next ? <a href={page.url.next}>Siguiente →</a> : <span class="disabled">Siguiente →</span>}
-					</nav>
-				</div>
-
-				<!-- Panel de Tags (4/12) -->
-				<aside class="tags-column">
-					<section class="tags-panel">
-						<h2>Tags</h2>
-						<div class="tags-cloud">
-							{allTags.map((tag) => (
-								<span class="tag-item">#{tag}</span>
-							))}
-						</div>
-					</section>
-				</aside>
+				<nav class="pagination">
+					{page.url.prev ? <a href={page.url.prev}>← Anterior</a> : <span class="disabled">← Anterior</span>}
+					<span class="page-info">Página {page.currentPage} de {page.lastPage}</span>
+					{page.url.next ? <a href={page.url.next}>Siguiente →</a> : <span class="disabled">Siguiente →</span>}
+				</nav>
 			</main>
 
 			<footer>
@@ -89,76 +81,43 @@ const formatId = (id: string) => id.split('-').map(word => word.charAt(0).toUppe
 					<a href="/blog">Blog</a>
 					<a href="https://github.com/ch00d4" target="_blank">GitHub</a>
 					<a href="https://linkedin.com/in/ch00d4/" target="_blank">LinkedIn</a>
+					<a href="https://twitter.com/ch00d4" target="_blank">Twitter</a>
 				</div>
+				<label class="switch-container">
+					<span class="switch-label">MODO OSCURO</span>
+					<div class="switch">
+						<input type="checkbox" id="themeCheckbox">
+						<span class="slider"></span>
+					</div>
+				</label>
 			</footer>
 		</div>
+
+		<script>
+			const checkbox = document.getElementById("themeCheckbox") as HTMLInputElement;
+			const element = document.documentElement;
+
+			if (checkbox) {
+				checkbox.checked = element.classList.contains("dark");
+			}
+
+			checkbox?.addEventListener("change", () => {
+			  element.classList.toggle("dark");
+			  element.classList.toggle("light");
+		
+			  const isDark = element.classList.contains("dark");
+			  localStorage.setItem("theme", isDark ? "dark" : "light");
+			});
+		</script>
 	</body>
 </html>
 
 <style>
-	/* 12-column Grid System */
-	.blog-grid {
-		display: grid;
-		grid-template-columns: repeat(12, 1fr);
-		gap: 2rem;
-		align-items: start;
-	}
-
-	.posts-column {
-		grid-column: span 8;
-	}
-
-	.tags-column {
-		grid-column: span 4;
-		position: sticky;
-		top: 2rem;
-	}
-
-	.tags-panel {
-		border: 1px solid var(--border-color);
-		padding: 1.5rem;
-		border-radius: 12px;
-		background: var(--card-bg);
-	}
-
-	.tags-panel h2 {
-		font-size: 1.2rem;
-		margin-bottom: 1rem;
-		border-bottom: 1px solid var(--border-color);
-		padding-bottom: 0.5rem;
-	}
-
-	.tags-cloud {
-		display: flex;
-		flex-wrap: wrap;
-		gap: 0.5rem;
-	}
-
-	.tag-item {
-		font-family: var(--font-mono);
-		font-size: 0.8rem;
-		color: var(--accent-color);
-		background: var(--subtle);
-		padding: 0.2rem 0.6rem;
-		border-radius: 4px;
-	}
-
 	.post-meta {
 		display: flex;
 		justify-content: space-between;
 		align-items: center;
 		margin-top: 1rem;
-	}
-
-	.post-tags {
-		display: flex;
-		gap: 0.5rem;
-	}
-
-	.mini-tag {
-		font-family: var(--font-mono);
-		font-size: 0.7rem;
-		opacity: 0.5;
 	}
 
 	.pagination {
@@ -174,15 +133,4 @@ const formatId = (id: string) => id.split('-').map(word => word.charAt(0).toUppe
 
 	.page-info { opacity: 0.7; }
 	.disabled { opacity: 0.3; cursor: not-allowed; }
-
-	/* Responsividad */
-	@media (max-width: 900px) {
-		.posts-column, .tags-column {
-			grid-column: span 12;
-		}
-		.tags-column {
-			order: -1; /* Tags arriba en móvil */
-			position: static;
-		}
-	}
 </style>

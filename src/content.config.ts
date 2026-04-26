@@ -9,7 +9,8 @@ const blog = defineCollection({
 		pubDate: z.coerce.date(),
 		updatedDate: z.coerce.date().optional(),
 		heroImage: z.string().optional(),
-		tags: z.array(z.string()).default([]), // Añadimos soporte para tags
+		draft: z.boolean().optional().default(false),
+		slug: z.string().optional(), // Permitimos un slug personalizado
 	}),
 });
 
