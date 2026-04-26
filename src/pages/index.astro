@@ -2,6 +2,8 @@
 import '../styles/global.css';
 import '../styles/archive.css';
 import { getCollection } from 'astro:content';
+import fs from 'node:fs';
+import path from 'node:path';
 import Footer from '../components/Footer.astro';
 import Navigation from '../components/Navigation.astro';
 
@@ -9,7 +11,21 @@ const posts = (await getCollection('blog', ({ data }) => {
 	return data.draft !== true;
 })).sort(
 	(a, b) => b.data.pubDate.valueOf() - a.data.pubDate.valueOf()
-).slice(0, 3); // Solo mostramos los 3 últimos en la home
+).slice(0, 3);
+
+// Función para obtener el título del # (H1) o del nombre del archivo
+const getDisplayTitle = (post: any) => {
+	if (post.data.title) return post.data.title;
+	
+	try {
+		const filePath = path.join(process.cwd(), 'src/content/blog', `${post.id}.md`);
+		const content = fs.readFileSync(filePath, 'utf-8');
+		const match = content.match(/^#\s+(.+)$/m);
+		return match ? match[1] : post.id;
+	} catch (e) {
+		return post.id;
+	}
+};
 ---
 <!doctype html>
 <html lang="es">
@@ -33,26 +49,21 @@ const posts = (await getCollection('blog', ({ data }) => {
 			<header>
 				<img class="avatar" alt="Wilfredo González Carvajal" src="/img/avatar1.png">
 				<div>
-					<h1>Wilfredo González</h1>
-					<h2>Developer & Tech Lead</h2>
+					<h1>Wilfredo González Carvajal</h1>
+					<h2>Developer</h2>
 				</div>
-				<p>Backend Developer | Head of Engineering | Project Manager | Sysadmin</p>
+				<p>Developer | Project Manager | DevOps</p>
+				<p>Especialista en desarrollo backend y liderazgo técnico con enfoque en escalabilidad y arquitectura robusta.</p>
 			</header>
 
 			<main>
-				<section>
-					<p>Especialista en desarrollo backend y liderazgo técnico con enfoque en escalabilidad y arquitectura robusta.</p>
-					<br>
-					<a target="_blank" href="https://drive.google.com/file/d/1-9swsc-_e7h5_RFiiKwYVg32OBQESRZP/view?usp=sharing">→ Ver Resumen Curricular</a>
-				</section>
-
 				<section class="stats">
 					<div class="stat-card">
-						<b>6</b>
+						<b>9</b>
 						<p>Años de Experiencia</p>
 					</div>
 					<div class="stat-card">
-						<b>21</b>
+						<b>26</b>
 						<p>Proyectos Colaborados</p>
 					</div>
 					<div class="stat-card">
@@ -60,21 +71,20 @@ const posts = (await getCollection('blog', ({ data }) => {
 						<p>Proyectos Liderados</p>
 					</div>
 					<div class="stat-card">
-						<b>2</b>
+						<b>3</b>
 						<p>Proyectos Fundados</p>
 					</div>
 				</section>
 
 				<section id="blog">
-					<h2>Últimos Artículos</h2>
+					<h3>Últimos Artículos</h3>
 					<br>
 					<ul class="post-list">
 						{posts.map((post) => (
 							<li>
 								<a href={`/blog/${post.id}`} class="post-card">
-									<h3>{post.data.title}</h3>
+									<h3>{getDisplayTitle(post)}</h3>
 									<div class="post-summary-container">
-										<span class="post-summary-label">Resumen</span>
 										<p class="post-summary-text">{post.data.description}</p>
 									</div>
 									<span class="post-date-mono">

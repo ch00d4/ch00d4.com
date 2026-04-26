@@ -2,6 +2,7 @@
 pubDate: 2026-04-26
 description: "Aprende a configurar el desbloqueo automático de disco mediante TPM 2.0 en un entorno Dual Boot con Fedora (LUKS) y Windows (BitLocker) de forma segura."
 slug: "guia-desbloqueo-automatico-tpm-luks-bitlocker-dual-boot"
+title: "Cifrado sin contraseñas: TPM 2.0 en Fedora y Windows"
 ---
 
 # Olvídate de la Contraseña: Desbloqueo Automático de Disco con TPM 2.0 en Dual Boot (Fedora LUKS y Windows BitLocker)

@@ -48,7 +48,7 @@ const getDisplayTitle = (post: any) => {
 
 			<header>
 				<div class="post-header-content">
-					<h1>Archivo del Blog</h1>
+					<h1>Blog</h1>
 					<p class="post-archive-info">Explora todas mis publicaciones ({page.total} artículos)</p>
 				</div>
 			</header>
@@ -61,7 +61,6 @@ const getDisplayTitle = (post: any) => {
 								<a href={`/blog/${post.data.slug || post.id}`} class="post-card">
 									<h3>{getDisplayTitle(post)}</h3>
 									<div class="post-summary-container">
-										<span class="post-summary-label">Resumen</span>
 										<p class="post-summary-text">{post.data.description || "Sin descripción disponible."}</p>
 									</div>
 									
