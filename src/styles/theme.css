@@ -1,0 +1,62 @@
+/* Tipografías */
+@import url('https://fonts.googleapis.com/css2?family=Red+Hat+Display:wght@700&family=Red+Hat+Mono&family=Red+Hat+Text:wght@400;500;700&display=swap');
+
+:root {
+  /* 1. Colores Principales (Identidad) */
+  --ch00d4-blue: #3C6EB4;
+  --ch00d4-dark-blue: #111827;
+  --ch00d4-light-blue: #51A2DA;
+
+  /* 2. Colores de Acento (Las 4 Fundaciones) */
+  --color-friends: #DB3279;
+  --color-features: #E59728;
+  --color-first: #79DB32;
+  --color-freedom: #A07CBC;
+
+  /* 3. Escala de Neutros */
+  --deep-night: #1D1D1D;
+  --steel-grey: #8C8C8C;
+  --cloud: #DEDEDE;
+  --snow: #FFFFFF;
+
+  /* Fuentes */
+  --font-display: 'Red Hat Display', sans-serif;
+  --font-text: 'Red Hat Text', sans-serif;
+  --font-mono: 'Red Hat Mono', monospace;
+
+  /* Mapeo Semántico por defecto: MODO CLARO */
+  --bg: var(--snow);
+  --text: var(--deep-night);
+  --text-muted: var(--steel-grey);
+  --title-color: var(--ch00d4-dark-blue);
+  --accent-color: var(--ch00d4-blue);
+  --accent-weight: 500;
+  --card-bg: var(--cloud);
+  --border-color: var(--ch00d4-light-blue);
+}
+
+/* Aplicar modo oscuro si el usuario lo prefiere en el sistema O si tiene la clase .dark */
+:root.dark {
+  --bg: var(--ch00d4-dark-blue);
+  --text: var(--snow);
+  --text-muted: var(--cloud);
+  --title-color: var(--snow);
+  --accent-color: var(--snow);
+  --accent-weight: 700;
+  --card-bg: var(--ch00d4-blue);
+  --border-color: var(--ch00d4-light-blue);
+}
+
+/* También soportar la preferencia del sistema por defecto */
+@media (prefers-color-scheme: dark) {
+  :root:not(.light) {
+    --bg: var(--ch00d4-dark-blue);
+    --text: var(--snow);
+    --text-muted: var(--cloud);
+    --title-color: var(--snow);
+    --accent-color: var(--snow);
+    --accent-weight: 700;
+    --card-bg: var(--ch00d4-blue);
+    --border-color: var(--ch00d4-light-blue);
+  }
+}

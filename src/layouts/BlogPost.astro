@@ -1,0 +1,50 @@
+---
+import '../styles/global.css';
+const { title, description, pubDate, heroImage, headings } = Astro.props;
+
+// Si no hay título en el frontmatter, buscamos el primer H1 (#) de los headings
+const displayTitle = title || headings?.find((h: any) => h.depth === 1)?.text || "Artículo sin título";
+---
+<!doctype html>
+<html lang="es">
+	<head>
+		<meta charset="UTF-8" />
+		<meta name="viewport" content="width=device-width, initial-scale=1.0" />
+		<title>{displayTitle} | ch00d4</title>
+		{description && <meta name="description" content={description} />}
+	</head>
+	<body>
+		<div class="layout">
+			<header>
+				<a href="/blog" style="font-family: var(--font-mono); font-size: 0.8rem;">← BLOG</a>
+				<div style="margin-top: 2rem;">
+					<h1>{displayTitle}</h1>
+					<p style="opacity: 0.6; font-size: 0.9rem;">{pubDate.toLocaleDateString('es-es', { year: 'numeric', month: 'long', day: 'numeric' })}</p>
+				</div>
+			</header>
+
+			<main>
+				<article class="prose">
+					{heroImage && <img width={1020} height={510} src={heroImage} alt="" style="border-radius: 12px; margin-bottom: 2rem;" />}
+					<slot />
+				</article>
+			</main>
+
+			<footer>
+				<div class="social">
+					<a href="/blog">Blog</a>
+					<a href="https://github.com/ch00d4" target="_blank">GitHub</a>
+					<a href="https://linkedin.com/in/ch00d4/" target="_blank">LinkedIn</a>
+				</div>
+			</footer>
+		</div>
+	</body>
+</html>
+
+<style is:global>
+	.prose h1 { display: none; } /* Ocultamos el H1 del cuerpo porque ya lo mostramos en el header */
+	.prose h2 { margin-top: 2rem; margin-bottom: 1rem; }
+	.prose p { margin-bottom: 1.5rem; }
+	.prose ul { margin-bottom: 1.5rem; padding-left: 1.5rem; }
+	.prose li { margin-bottom: 0.5rem; }
+</style>

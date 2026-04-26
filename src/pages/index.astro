@@ -1,0 +1,135 @@
+---
+import '../styles/global.css';
+import { getCollection } from 'astro:content';
+
+const posts = (await getCollection('blog')).sort(
+	(a, b) => b.data.pubDate.valueOf() - a.data.pubDate.valueOf()
+).slice(0, 3); // Solo mostramos los 3 últimos en la home
+---
+<!doctype html>
+<html lang="es">
+	<head>
+		<meta charset="UTF-8">
+		<meta name="viewport" content="width=device-width, initial-scale=1.0">
+		<title>Wilfredo González Carvajal</title>
+		<!-- Google tag (gtag.js) -->
+		<script async src="https://www.googletagmanager.com/gtag/js?id=G-ZLDC6PNYQE"></script>
+		<script is:inline>
+		  window.dataLayer = window.dataLayer || [];
+		    function gtag(){dataLayer.push(arguments);}
+		      gtag('js', new Date());
+		      gtag('config', 'G-ZLDC6PNYQE');
+
+		  const theme = (() => {
+			if (typeof localStorage !== 'undefined' && localStorage.getItem('theme')) {
+			  return localStorage.getItem('theme');
+			}
+			if (window.matchMedia('(prefers-color-scheme: dark)').matches) {
+			  return 'dark';
+			}
+			return 'light';
+		  })();
+		
+		  if (theme === 'light') {
+			document.documentElement.classList.remove('dark');
+			document.documentElement.classList.add('light');
+		  } else {
+			document.documentElement.classList.add('dark');
+			document.documentElement.classList.remove('light');
+		  }
+		  window.localStorage.setItem('theme', theme);
+		</script>
+	</head>
+	<body>
+		<div class="layout">
+			<header>
+				<img class="avatar" alt="Wilfredo González Carvajal" src="/img/avatar1.png">
+				<div>
+					<h1>Wilfredo González</h1>
+					<h2>Developer & Tech Lead</h2>
+				</div>
+				<p>Backend Developer | Head of Engineering | Project Manager | Sysadmin</p>
+			</header>
+
+			<main>
+				<section>
+					<p>Especialista en desarrollo backend y liderazgo técnico con enfoque en escalabilidad y arquitectura robusta.</p>
+					<br>
+					<a target="_blank" href="https://drive.google.com/file/d/1-9swsc-_e7h5_RFiiKwYVg32OBQESRZP/view?usp=sharing">→ Ver Resumen Curricular</a>
+				</section>
+
+				<section class="stats">
+					<div class="stat-card">
+						<b>6</b>
+						<p>Años de Experiencia</p>
+					</div>
+					<div class="stat-card">
+						<b>21</b>
+						<p>Proyectos Colaborados</p>
+					</div>
+					<div class="stat-card">
+						<b>7</b>
+						<p>Proyectos Liderados</p>
+					</div>
+					<div class="stat-card">
+						<b>2</b>
+						<p>Proyectos Fundados</p>
+					</div>
+				</section>
+
+				<section id="blog">
+					<h2>Últimos Artículos</h2>
+					<br>
+					<ul style="list-style: none; padding: 0; display: flex; flex-direction: column; gap: 1.5rem;">
+						{posts.map((post) => (
+							<li>
+								<a href={`/blog/${post.id}`} style="display: block; border: 1px solid var(--border-color); padding: 1.5rem; border-radius: 12px; background: var(--card-bg);">
+									<h3 style="margin-bottom: 0.5rem;">{post.data.title}</h3>
+									<p style="font-size: 0.9rem; opacity: 0.8; margin-bottom: 0.5rem;">{post.data.description}</p>
+									<span style="font-family: var(--font-mono); font-size: 0.75rem; opacity: 0.6;">
+										{post.data.pubDate.toLocaleDateString('es-es', { year: 'numeric', month: 'long', day: 'numeric' })}
+									</span>
+								</a>
+							</li>
+						))}
+					</ul>
+					<br>
+					<a href="/blog" style="font-family: var(--font-mono); font-size: 0.9rem; font-weight: 700;">→ Ver todas las publicaciones</a>
+				</section>
+			</main>
+
+			<footer>
+				<div class="social">
+					<a href="/blog">Blog</a>
+					<a href="https://github.com/ch00d4" target="_blank">GitHub</a>
+					<a href="https://linkedin.com/in/ch00d4/" target="_blank">LinkedIn</a>
+					<a href="https://twitter.com/ch00d4" target="_blank">Twitter</a>
+				</div>
+				<label class="switch-container">
+					<span class="switch-label">MODO OSCURO</span>
+					<div class="switch">
+						<input type="checkbox" id="themeCheckbox">
+						<span class="slider"></span>
+					</div>
+				</label>
+			</footer>
+		</div>
+
+		<script>
+			const checkbox = document.getElementById("themeCheckbox") as HTMLInputElement;
+			const element = document.documentElement;
+
+			if (checkbox) {
+				checkbox.checked = element.classList.contains("dark");
+			}
+
+			checkbox?.addEventListener("change", () => {
+			  element.classList.toggle("dark");
+			  element.classList.toggle("light");
+		
+			  const isDark = element.classList.contains("dark");
+			  localStorage.setItem("theme", isDark ? "dark" : "light");
+			});
+		</script>
+	</body>
+</html>
