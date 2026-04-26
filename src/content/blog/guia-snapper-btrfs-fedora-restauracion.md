@@ -2,6 +2,7 @@
 pubDate: 2026-04-26
 description: "Guía técnica sobre la implementación de Snapper para la gestión de snapshots Btrfs en Fedora, permitiendo la creación de puntos de restauración del sistema."
 slug: "guia-snapper-btrfs-fedora-restauracion"
+draft: true
 ---
 # Implementación de Snapper en Fedora: Gestión Avanzada de Snapshots Btrfs
 
@@ -20,23 +21,27 @@ El funcionamiento de Snapper se basa en la jerarquía de subvolúmenes de Btrfs.
 3. **Diferenciación:** Snapper permite comparar ambos estados mediante el análisis de metadatos de los bloques.
 
 
-
 ## Implementación Práctica
 
 ### 1. Instalación y Preparación
 Primero, es imperativo instalar el paquete principal y el plugin para el gestor de paquetes DNF, lo que automatizará la creación de snapshots en cada instalación o borrado de software.
 
-`sudo dnf install snapper python3-dnf-plugin-snapper`
-
+```shell
+sudo dnf install snapper python3-dnf-plugin-snapper
+```
 ### 2. Configuración del Subvolumen para la Raíz
 Para que Snapper gestione la raíz del sistema, debemos crear una configuración específica llamada `root`.
 
-`sudo snapper -c root create-config /`
+```shell
+sudo snapper -c root create-config /
+```
 
 ### 3. Ajuste de Permisos y Políticas
 Por defecto, solo el usuario root puede interactuar con Snapper. Para permitir el uso al usuario actual y ajustar la retención de snapshots (para evitar saturar el disco):
 
-`sudo nano /etc/snapper/configs/root`
+```shell
+sudo nano /etc/snapper/configs/root
+```
 
 Modifique los siguientes parámetros para optimizar el espacio:
 * `ALLOW_USERS="tu_usuario"`
@@ -46,19 +51,27 @@ Modifique los siguientes parámetros para optimizar el espacio:
 ### 4. Creación Manual de un Punto de Restauración
 Para crear un snapshot manual antes de modificar archivos de configuración sensibles en `/etc`:
 
-`snapper -c root create --description "Antes de modificar SSHD" --userdata "type=manual"`
+```shell
+snapper -c root create --description "Antes de modificar SSHD" --userdata "type=manual"
+```
 
 ## Estudio de Caso / Escenario
 **Escenario:** Un ingeniero actualiza el kernel y los drivers de video, resultando en un sistema inestable.
 
 **Resolución:**
 1. Listar los snapshots disponibles para identificar el ID previo al fallo:
-   `snapper -c root list`
+   ```shell
+   snapper -c root list
+   ```
 2. Identificar que el snapshot ID 45 es el "Pre" y el 46 es el "Post" de la actualización.
 3. Comparar cambios en archivos específicos:
-   `snapper -c root diff 45..46 /etc/X11/xorg.conf`
+   ```shell
+   snapper -c root diff 45..46 /etc/X11/xorg.conf
+   ```
 4. Revertir el sistema al estado del snapshot 45:
-   `sudo snapper -c root undochange 45..46`
+   ```shell
+   sudo snapper -c root undochange 45..46
+   ```
 
 ## Pros, Contras y Compensaciones
 
@@ -70,4 +83,8 @@ Para crear un snapshot manual antes de modificar archivos de configuración sens
 | **Integridad** | Pros | Garantiza consistencia a nivel de bloque en el sistema de archivos. |
 
 ## Conclusión
-Snapper transforma la gestión de Fedora de un modelo de "esperar lo mejor" a uno de **resiliencia determinista**. Su integración con Btrfs ofrece una capa de seguridad técnica superior a las herramientas de respaldo a nivel de archivo. Para una implementación profesional, se recomienda monitorizar periódicamente el espacio de los subvolúmenes mediante `btrfs filesystem usage /` para asegurar que las políticas de retención de Snapper sean adecuadas para la carga de trabajo del sistema.
+Snapper transforma la gestión de Fedora de un modelo de "esperar lo mejor" a uno de **resiliencia determinista**. Su integración con Btrfs ofrece una capa de seguridad técnica superior a las herramientas de respaldo a nivel de archivo. Para una implementación profesional, se recomienda monitorizar periódicamente el espacio de los subvolúmenes mediante 
+```shell
+btrfs filesystem usage /
+```
+para asegurar que las políticas de retención de Snapper sean adecuadas para la carga de trabajo del sistema.

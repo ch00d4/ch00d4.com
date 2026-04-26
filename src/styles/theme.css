@@ -24,19 +24,7 @@
   --font-text: 'Red Hat Text', sans-serif;
   --font-mono: 'Red Hat Mono', monospace;
 
-  /* Mapeo Semántico por defecto: MODO CLARO */
-  --bg: var(--snow);
-  --text: var(--deep-night);
-  --text-muted: var(--steel-grey);
-  --title-color: var(--ch00d4-dark-blue);
-  --accent-color: var(--ch00d4-blue);
-  --accent-weight: 500;
-  --card-bg: var(--cloud);
-  --border-color: var(--ch00d4-light-blue);
-}
-
-/* Aplicar modo oscuro si el usuario lo prefiere en el sistema O si tiene la clase .dark */
-:root.dark {
+  /* Mapeo Semántico Permanente: MODO OSCURO */
   --bg: var(--ch00d4-dark-blue);
   --text: var(--snow);
   --text-muted: var(--cloud);
@@ -45,18 +33,5 @@
   --accent-weight: 700;
   --card-bg: var(--ch00d4-blue);
   --border-color: var(--ch00d4-light-blue);
-}
-
-/* También soportar la preferencia del sistema por defecto */
-@media (prefers-color-scheme: dark) {
-  :root:not(.light) {
-    --bg: var(--ch00d4-dark-blue);
-    --text: var(--snow);
-    --text-muted: var(--cloud);
-    --title-color: var(--snow);
-    --accent-color: var(--snow);
-    --accent-weight: 700;
-    --card-bg: var(--ch00d4-blue);
-    --border-color: var(--ch00d4-light-blue);
-  }
+  --subtle: rgba(255, 255, 255, 0.1);
 }

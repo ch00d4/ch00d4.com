@@ -1,5 +1,7 @@
 ---
 import '../styles/global.css';
+import Footer from '../components/Footer.astro';
+import Navigation from '../components/Navigation.astro';
 const { title, description, pubDate, heroImage, headings } = Astro.props;
 
 const displayTitle = title || headings?.find((h: any) => h.depth === 1)?.text || "Artículo sin título";
@@ -14,8 +16,9 @@ const displayTitle = title || headings?.find((h: any) => h.depth === 1)?.text ||
 	</head>
 	<body>
 		<div class="layout">
+			<Navigation showBack={true} />
+
 			<header>
-				<a href="/blog" style="font-family: var(--font-mono); font-size: 0.8rem;">← BLOG</a>
 				<div style="margin-top: 2rem;">
 					<h1>{displayTitle}</h1>
 					<p style="opacity: 0.6; font-size: 0.9rem;">{pubDate.toLocaleDateString('es-es', { year: 'numeric', month: 'long', day: 'numeric' })}</p>
@@ -29,13 +32,7 @@ const displayTitle = title || headings?.find((h: any) => h.depth === 1)?.text ||
 				</article>
 			</main>
 
-			<footer>
-				<div class="social">
-					<a href="/blog">Blog</a>
-					<a href="https://github.com/ch00d4" target="_blank">GitHub</a>
-					<a href="https://linkedin.com/in/ch00d4/" target="_blank">LinkedIn</a>
-				</div>
-			</footer>
+			<Footer />
 		</div>
 	</body>
 </html>
@@ -96,16 +93,21 @@ const displayTitle = title || headings?.find((h: any) => h.depth === 1)?.text ||
 		border-radius: 0 8px 8px 0;
 	}
 
-	/* Tablas */
+	/* Tablas Responsivas */
 	.prose table {
+		display: block;
 		width: 100%;
+		overflow-x: auto;
+		-webkit-overflow-scrolling: touch;
 		border-collapse: collapse;
 		margin: 2rem 0;
+		border: 1px solid var(--border-color);
 	}
 	.prose th, .prose td {
 		border: 1px solid var(--border-color);
 		padding: 0.75rem;
 		text-align: left;
+		min-width: 120px; /* Evita que las columnas se colapsen demasiado */
 	}
 	.prose th {
 		background: var(--subtle);

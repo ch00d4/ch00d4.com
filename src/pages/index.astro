@@ -1,6 +1,8 @@
 ---
 import '../styles/global.css';
 import { getCollection } from 'astro:content';
+import Footer from '../components/Footer.astro';
+import Navigation from '../components/Navigation.astro';
 
 const posts = (await getCollection('blog', ({ data }) => {
 	return data.draft !== true;
@@ -21,29 +23,12 @@ const posts = (await getCollection('blog', ({ data }) => {
 		    function gtag(){dataLayer.push(arguments);}
 		      gtag('js', new Date());
 		      gtag('config', 'G-ZLDC6PNYQE');
-
-		  const theme = (() => {
-			if (typeof localStorage !== 'undefined' && localStorage.getItem('theme')) {
-			  return localStorage.getItem('theme');
-			}
-			if (window.matchMedia('(prefers-color-scheme: dark)').matches) {
-			  return 'dark';
-			}
-			return 'light';
-		  })();
-		
-		  if (theme === 'light') {
-			document.documentElement.classList.remove('dark');
-			document.documentElement.classList.add('light');
-		  } else {
-			document.documentElement.classList.add('dark');
-			document.documentElement.classList.remove('light');
-		  }
-		  window.localStorage.setItem('theme', theme);
 		</script>
 	</head>
 	<body>
 		<div class="layout">
+			<Navigation />
+
 			<header>
 				<img class="avatar" alt="Wilfredo González Carvajal" src="/img/avatar1.png">
 				<div>
@@ -100,38 +85,7 @@ const posts = (await getCollection('blog', ({ data }) => {
 				</section>
 			</main>
 
-			<footer>
-				<div class="social">
-					<a href="/blog">Blog</a>
-					<a href="https://github.com/ch00d4" target="_blank">GitHub</a>
-					<a href="https://linkedin.com/in/ch00d4/" target="_blank">LinkedIn</a>
-					<a href="https://twitter.com/ch00d4" target="_blank">Twitter</a>
-				</div>
-				<label class="switch-container">
-					<span class="switch-label">MODO OSCURO</span>
-					<div class="switch">
-						<input type="checkbox" id="themeCheckbox">
-						<span class="slider"></span>
-					</div>
-				</label>
-			</footer>
+			<Footer />
 		</div>
-
-		<script>
-			const checkbox = document.getElementById("themeCheckbox") as HTMLInputElement;
-			const element = document.documentElement;
-
-			if (checkbox) {
-				checkbox.checked = element.classList.contains("dark");
-			}
-
-			checkbox?.addEventListener("change", () => {
-			  element.classList.toggle("dark");
-			  element.classList.toggle("light");
-		
-			  const isDark = element.classList.contains("dark");
-			  localStorage.setItem("theme", isDark ? "dark" : "light");
-			});
-		</script>
 	</body>
 </html>
