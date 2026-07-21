@@ -14,7 +14,7 @@
   "author": "",
   "license": "ISC",
   "dependencies": {
-    "astro": "^6.1.9"
+    "astro": "^7.1.0"
   },
   "engines": {
     "node": "^24.0.0"
